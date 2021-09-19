@@ -27,11 +27,20 @@ const SearchButton = ({ loading = false, onRequestSearch }) => {
         variant="contained"
         startIcon={<GpsFixedIcon />}
         onClick={(e) => {
-          navigator.geolocation.getCurrentPosition((pos) => {
-            const { coords } = pos
-            const { latitude, longitude } = coords
-            handleRequestSearch({ lat: latitude, lng: longitude })
-          })
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              const { coords } = pos
+              const { latitude, longitude } = coords
+              handleRequestSearch({ lat: latitude, lng: longitude })
+            },
+            (err) => {
+              console.log(err)
+              handleRequestSearch({
+                lat: 40.44438388588774,
+                lng: -79.94336563409755,
+              })
+            }
+          )
         }}
       >
         Find parking

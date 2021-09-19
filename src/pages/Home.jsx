@@ -14,7 +14,7 @@ import { DateTime } from "luxon"
 import { TimePicker } from "@material-ui/pickers"
 import AccessTimeIcon from "@material-ui/icons/AccessTime"
 
-const API_URL = process.env.API_URL || "http://localhost:5000"
+const API_URL = process.env.API_URL || "https://drg-parking-backend.herokuapp.com"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,7 +74,6 @@ const Home = () => {
     setLoading(true)
     setAnimationState(1)
     const timestamp = time.toFormat("HHmm")
-    console.log("Time", timestamp)
     const hours = time.hour
     const minutes = time.minute
     const { data } = await axios.get(
