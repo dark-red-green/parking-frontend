@@ -14,7 +14,8 @@ import { DateTime } from "luxon"
 import { TimePicker } from "@material-ui/pickers"
 import AccessTimeIcon from "@material-ui/icons/AccessTime"
 
-const API_URL = process.env.API_URL || "https://drg-parking-backend.herokuapp.com"
+const API_URL =
+  process.env.API_URL || "https://drg-parking-backend.herokuapp.com"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -134,9 +135,6 @@ const Home = () => {
             src="/parking-sign.png"
             className={classes.park}
             alt="parking icon"
-            onClick={() => {
-              setAnimationState(0)
-            }}
           />
         </motion.div>
 
