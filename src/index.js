@@ -4,12 +4,16 @@ import "./index.css"
 import App from "./App"
 import { ThemeProvider } from "@material-ui/styles"
 import { createTheme } from "@material-ui/core"
+import { MuiPickersUtilsProvider } from "@material-ui/pickers"
+import LuxonUtils from "@date-io/luxon"
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={createTheme()}>
-      <App />
-    </ThemeProvider>
+    <MuiPickersUtilsProvider utils={LuxonUtils}>
+      <ThemeProvider theme={createTheme()}>
+        <App />
+      </ThemeProvider>
+    </MuiPickersUtilsProvider>
   </React.StrictMode>,
   document.getElementById("root")
 )

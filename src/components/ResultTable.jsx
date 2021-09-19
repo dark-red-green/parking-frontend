@@ -33,6 +33,7 @@ const Row = ({
   lat = 40.444,
   lng = -79.946,
   image,
+  distance,
   numSpaces = 0,
 }) => {
   const classes = useStyles()
@@ -56,6 +57,9 @@ const Row = ({
         </TableCell>
         <TableCell align="center" className={`${classes.space} ${spaceColor}`}>
           {numSpaces}
+        </TableCell>
+        <TableCell align="center">
+          {(distance || 0).toFixed(2)}
         </TableCell>
         <TableCell align="center">
           <Link
@@ -98,6 +102,7 @@ const ResultTable = ({ data }) => {
             <TableCell />
             <TableCell>Name</TableCell>
             <TableCell align="center">Available Spaces</TableCell>
+            <TableCell align="center">Distance (mi)</TableCell>
             <TableCell align="center">Location</TableCell>
           </TableRow>
         </TableHead>

@@ -1,12 +1,20 @@
-import { makeStyles, Typography, useMediaQuery } from "@material-ui/core"
+import {
+  IconButton,
+  makeStyles,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+} from "@material-ui/core"
 import axios from "axios"
 import { motion } from "framer-motion"
 import React, { useState } from "react"
 import ResultTable from "../components/ResultTable"
-import SearchBar from "../components/SearchBar"
+import GPSButton from "../components/GPSButton"
+import { DateTime } from "luxon"
+import { TimePicker } from "@material-ui/pickers"
+import AccessTimeIcon from "@material-ui/icons/AccessTime"
 
 const API_URL = process.env.API_URL || "http://localhost:5000"
-const url = API_URL + "/img/2/0840"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     width: "100%",
     height: "100%",
-    background: "#efcb68",
   },
   dialog: {
     display: "flex",
@@ -23,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     width: "40%",
     [theme.breakpoints.down("md")]: {
-      width: "80%"
+      width: "80%",
     },
     marginTop: "10%",
     padding: "2em",
@@ -32,11 +39,14 @@ const useStyles = makeStyles((theme) => ({
       marginBottom: "0.5em",
     },
   },
-  searchBar: {
-    width: "80%",
+  search: {
+    width: "40%",
     [theme.breakpoints.down("md")]: {
-      width: "100%"
+      width: "100%",
     },
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   park: {
     height: "10em",
@@ -46,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
     width: "60%",
     [theme.breakpoints.down("md")]: {
       width: "90%",
-      marginTop: "-10em"
+      marginTop: "-10em",
     },
   },
 }))
@@ -56,13 +66,57 @@ const Home = () => {
   const [loading, setLoading] = useState(false)
   const [animationState, setAnimationState] = useState(0)
   const [data, setData] = useState(null)
-  const md = useMediaQuery(theme => theme.breakpoints.down("md"))
+  const [open, setOpen] = useState(false)
+  const [time, setTime] = useState(DateTime.now())
+  const md = useMediaQuery((theme) => theme.breakpoints.down("md"))
+
+  const onRequestSearch = async ({ lat, lng }) => {
+    setLoading(true)
+    setAnimationState(1)
+    const timestamp = time.toFormat("HHmm")
+    console.log("Time", timestamp)
+    const hours = time.hour
+    const minutes = time.minute
+    const { data } = await axios.get(
+      API_URL + `/get_best_parking/${lat}/${lng}/${hours}/${minutes}`
+    )
+
+    const parsed = data.map(
+      ({ distance, id, lat, long, name, num_spots_available }) => ({
+        distance,
+        id,
+        lat,
+        lng: long,
+        name,
+        numSpaces: num_spots_available,
+      })
+    )
+    const ids = parsed.map((p) => p.id)
+
+    const images = await Promise.all(
+      ids.map(async (id) => {
+        const { data: image } = await axios.get(
+          API_URL + `/img/${id}/${timestamp}`
+        )
+        return image
+      })
+    )
+    for (let i = 0; i < parsed.length; i++) {
+      parsed[i].image = images[i]
+    }
+
+    setData(parsed)
+    setLoading(false)
+  }
 
   const animations = {
     dialog: [{ marginTop: "10%" }, { marginTop: "0%" }],
-    icon: [{ y: 0 }, { y: md ? "-30%" : "-10%", x: md ? 0 : -500, scale: 0.5 }],
+    icon: [
+      { y: 0 },
+      { y: md ? "-30%" : "-10%", x: md ? 0 : "-200%", scale: 0.5 },
+    ],
     header: [{ opacity: 1 }, { opacity: 0 }],
-    searchBar: [{ y: 0 }, { y: "-325%" }],
+    search: [{ y: 0 }, { y: md ? "-325%" : "-400%" }],
   }
   const transition = { ease: "easeOut", duration: 0.75 }
 
@@ -91,33 +145,35 @@ const Home = () => {
           animate={animations.header[animationState]}
           transition={{ ease: "easeOut", duration: 0.25 }}
         >
-          <Typography variant="h4">Find available parking spots</Typography>
+          <Typography variant="h4">Parking Finder</Typography>
         </motion.div>
 
         <motion.div
-          className={classes.searchBar}
-          animate={animations.searchBar[animationState]}
+          className={classes.search}
+          animate={animations.search[animationState]}
           transition={transition}
         >
-          <SearchBar
-            loading={loading}
-            onRequestSearch={async (searchText) => {
-              setLoading(true)
-              setAnimationState(1)
-              const { data } = await axios.get(url)
-              setData([{ image: data }])
-              setLoading(false)
-            }}
-            onCancelSearch={() => {
-              setLoading(false)
-            }}
-            placeholder="Search parking spot"
-          />
+          <GPSButton loading={loading} onRequestSearch={onRequestSearch} />
+          <Tooltip title="Check another time">
+            <IconButton onClick={(e) => setOpen(true)}>
+              <AccessTimeIcon />
+            </IconButton>
+          </Tooltip>
         </motion.div>
       </motion.div>
       <div className={classes.tableContainer}>
         <ResultTable data={data} />
       </div>
+
+      <TimePicker
+        variant="dialog"
+        label="Time"
+        value={time}
+        onChange={setTime}
+        open={open}
+        onClose={() => setOpen(false)}
+        TextFieldComponent={(props) => null}
+      />
     </div>
   )
 }
