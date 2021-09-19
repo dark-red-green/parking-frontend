@@ -1,20 +1,11 @@
-import React, { useState } from "react"
 import {
-  TableContainer,
-  Paper,
-  TableBody,
-  Table,
-  TableRow,
-  TableCell,
-  IconButton,
-  Collapse,
-  Typography,
-  makeStyles,
-  TableHead,
+  Collapse, IconButton, Link, makeStyles, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from "@material-ui/core"
+import { green, red } from "@material-ui/core/colors"
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown"
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp"
-import { green, red } from "@material-ui/core/colors"
+import LaunchIcon from "@material-ui/icons/Launch"
+import React, { useState } from "react"
 
 const useStyles = makeStyles((theme) => ({
   resultImage: {
@@ -33,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
   space: {
     fontWeight: "bold",
-    fontSize: "1.5em"
+    fontSize: "1.5em",
   },
 }))
 
@@ -63,9 +54,16 @@ const Row = ({
         <TableCell component="th" scope="row">
           {name}
         </TableCell>
-        <TableCell align="center">{`Lat: ${lat}, Lon: ${lng}`}</TableCell>
         <TableCell align="center" className={`${classes.space} ${spaceColor}`}>
           {numSpaces}
+        </TableCell>
+        <TableCell align="center">
+          <Link
+            href={`http://maps.google.com/maps?z=17&t=m&q=loc:${lat}+${lng}`}
+            target="_blank"
+          >
+            <LaunchIcon />
+          </Link>
         </TableCell>
       </TableRow>
       <TableRow>
@@ -99,8 +97,8 @@ const ResultTable = ({ data }) => {
           <TableRow>
             <TableCell />
             <TableCell>Name</TableCell>
-            <TableCell align="center">Location</TableCell>
             <TableCell align="center">Available Spaces</TableCell>
+            <TableCell align="center">Location</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
