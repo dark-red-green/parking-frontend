@@ -27,6 +27,14 @@ const SearchButton = ({ loading = false, onRequestSearch }) => {
         variant="contained"
         startIcon={<GpsFixedIcon />}
         onClick={(e) => {
+          if (!navigator.geolocation) {
+            console.log("no geolocation")
+            handleRequestSearch({
+              lat: 40.44438388588774,
+              lng: -79.94336563409755,
+            })
+            return
+          }
           navigator.geolocation.getCurrentPosition(
             (pos) => {
               const { coords } = pos
