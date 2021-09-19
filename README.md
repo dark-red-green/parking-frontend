@@ -1,0 +1,1 @@
+Start with map widget, add button to search parking spots close to you
