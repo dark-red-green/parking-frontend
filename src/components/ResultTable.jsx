@@ -63,7 +63,7 @@ const Row = ({
         </TableCell>
         <TableCell align="center">
           <Link
-            href={`http://maps.google.com/maps?z=17&t=m&q=loc:${lat}+${lng}`}
+            href={`http://maps.google.com/maps?q=${lat},${lng}`}
             target="_blank"
           >
             <LaunchIcon />
