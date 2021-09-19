@@ -1,9 +1,9 @@
-import { makeStyles, Typography } from "@material-ui/core"
-import React, { useState } from "react"
-import SearchBar from "../components/SearchBar"
+import { makeStyles, Typography, useMediaQuery } from "@material-ui/core"
 import axios from "axios"
 import { motion } from "framer-motion"
+import React, { useState } from "react"
 import ResultTable from "../components/ResultTable"
+import SearchBar from "../components/SearchBar"
 
 const API_URL = process.env.API_URL || "http://localhost:5000"
 const url = API_URL + "/img/2/0840"
@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     width: "40%",
+    [theme.breakpoints.down("md")]: {
+      width: "80%"
+    },
     marginTop: "10%",
     padding: "2em",
     "& > *": {
@@ -31,6 +34,9 @@ const useStyles = makeStyles((theme) => ({
   },
   searchBar: {
     width: "80%",
+    [theme.breakpoints.down("md")]: {
+      width: "100%"
+    },
   },
   park: {
     height: "10em",
@@ -38,6 +44,10 @@ const useStyles = makeStyles((theme) => ({
   },
   tableContainer: {
     width: "60%",
+    [theme.breakpoints.down("md")]: {
+      width: "90%",
+      marginTop: "-10em"
+    },
   },
 }))
 
@@ -46,14 +56,15 @@ const Home = () => {
   const [loading, setLoading] = useState(false)
   const [animationState, setAnimationState] = useState(0)
   const [data, setData] = useState(null)
+  const md = useMediaQuery(theme => theme.breakpoints.down("md"))
 
   const animations = {
     dialog: [{ marginTop: "10%" }, { marginTop: "0%" }],
-    icon: [{ y: 0 }, { y: "-10%", x: -500, scale: 0.5 }],
+    icon: [{ y: 0 }, { y: md ? "-30%" : "-10%", x: md ? 0 : -500, scale: 0.5 }],
     header: [{ opacity: 1 }, { opacity: 0 }],
     searchBar: [{ y: 0 }, { y: "-325%" }],
   }
-  const transition = { ease: "easeOut", duration: 1 }
+  const transition = { ease: "easeOut", duration: 0.75 }
 
   return (
     <div className={classes.root}>
