@@ -3,14 +3,16 @@ import React, { useState } from "react"
 import SearchBar from "../components/SearchBar"
 import axios from "axios"
 import { motion } from "framer-motion"
+import ResultTable from "../components/ResultTable"
 
 const API_URL = process.env.API_URL || "http://localhost:5000"
-const url = API_URL + "/"
+const url = API_URL + "/img/2/0840"
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
-    justifyContent: "center",
+    flexDirection: "column",
+    alignItems: "center",
     width: "100%",
     height: "100%",
     background: "#efcb68",
@@ -34,12 +36,16 @@ const useStyles = makeStyles((theme) => ({
     height: "10em",
     cursor: "pointer",
   },
+  tableContainer: {
+    width: "60%",
+  },
 }))
 
 const Home = () => {
   const classes = useStyles()
   const [loading, setLoading] = useState(false)
   const [animationState, setAnimationState] = useState(0)
+  const [data, setData] = useState(null)
 
   const animations = {
     dialog: [{ marginTop: "10%" }, { marginTop: "0%" }],
@@ -87,9 +93,9 @@ const Home = () => {
             onRequestSearch={async (searchText) => {
               setLoading(true)
               setAnimationState(1)
-              console.log("URL", url)
-              const response = await axios.get(url)
-              console.log(response)
+              const { data } = await axios.get(url)
+              setData([{ image: data }])
+              setLoading(false)
             }}
             onCancelSearch={() => {
               setLoading(false)
@@ -98,6 +104,9 @@ const Home = () => {
           />
         </motion.div>
       </motion.div>
+      <div className={classes.tableContainer}>
+        <ResultTable data={data} />
+      </div>
     </div>
   )
 }
